@@ -7,12 +7,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+JP:wght@500;700&family=Noto+Sans+KR:wght@500;700&family=Noto+Sans+SC:wght@500;700&family=Vazirmatn:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #121212;
-      --card-bg: #1e1e1e;
-      --text: #ffffff;
-      --text-sub: #a0a0a0;
-      --border: #333333;
-      --accent: #4caf50;
+      /* Palette based on Notion UI image */
+      --notion-cream: #fbf7ee;
+      --notion-blue: #2383e2;
+      --notion-purple: #9065b0;
+      --notion-purple-bg: #f3eafd;
+      --notion-yellow: #d9931e;
+      --notion-yellow-bg: #fdf5e6;
+      --notion-red: #e03e3e;
+      --notion-red-bg: #fbebe8;
+      --notion-orange: #d9730d;
+      --notion-green: #448361;
+      --notion-green-bg: #edf6f0;
+      --notion-pink: #d15796;
+
+      /* Adaptive Notion-themed light mode */
+      --bg: transparent; /* Makes background adapt seamlessly to Notion embed container */
+      --card-bg: #ffffff;
+      --text: #37352f;
+      --text-sub: #787774;
+      --border: #e9e9e7;
+      --accent: var(--notion-green);
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-pixel: 'Press Start 2P', monospace;
       --font-cjk: 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', 'Vazirmatn', -apple-system, sans-serif;
@@ -38,8 +53,30 @@
       --ui-size: 10px;
     }
 
+    /* System Light Mode (Adapts automatically to Notion light theme) */
+    @media (prefers-color-scheme: light) {
+      body.theme-auto {
+        --bg: transparent;
+        --card-bg: #ffffff;
+        --text: #37352f;
+        --text-sub: #787774;
+        --border: #e9e9e7;
+      }
+    }
+
+    /* System Dark Mode (Adapts automatically to Notion dark theme) */
+    @media (prefers-color-scheme: dark) {
+      body.theme-auto {
+        --bg: transparent;
+        --card-bg: #252525;
+        --text: #rgba(255, 255, 255, 0.9);
+        --text-sub: #9b9b9b;
+        --border: #373737;
+      }
+    }
+
     body.theme-dark {
-      --bg: #121212;
+      --bg: transparent;
       --card-bg: #1e1e1e;
       --text: #ffffff;
       --text-sub: #a0a0a0;
@@ -47,7 +84,7 @@
     }
 
     body.theme-dim {
-      --bg: #1f232a;
+      --bg: transparent;
       --card-bg: #2d3139;
       --text: #e0e0e0;
       --text-sub: #8b929e;
@@ -55,11 +92,11 @@
     }
 
     body.theme-bright {
-      --bg: #f0f2f5;
+      --bg: transparent;
       --card-bg: #ffffff;
-      --text: #111111;
-      --text-sub: #666666;
-      --border: #dddddd;
+      --text: #37352f;
+      --text-sub: #787774;
+      --border: #e9e9e7;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -76,21 +113,13 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(120, 119, 116, 0.3);
       border-radius: 10px;
       transition: background 0.2s ease;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.45);
-    }
-
-    body.theme-bright ::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    body.theme-bright ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(120, 119, 116, 0.5);
     }
 
     body {
@@ -107,7 +136,7 @@
 
     .app-card {
       background-color: var(--card-bg);
-      border: 2px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       width: 260px;
       padding: 16px;
@@ -115,7 +144,7 @@
       flex-direction: column;
       align-items: center;
       position: relative;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .top-bar {
@@ -130,6 +159,7 @@
       font-size: var(--title-size);
       font-weight: bold;
       letter-spacing: 0.5px;
+      color: var(--notion-blue);
     }
 
     .icon-btn {
@@ -166,15 +196,20 @@
       margin-top: 2px;
       line-height: 1.35;
       font-weight: 500;
-      padding: 0 4px;
+      padding: 4px 8px;
+      background: var(--notion-cream);
+      border-radius: calc(var(--radius) / 2);
+      border: 1px solid rgba(0,0,0,0.04);
+      width: 100%;
     }
 
     .status-tracker {
       font-size: calc(var(--ui-size) - 1px);
-      color: var(--text-sub);
-      margin-top: 4px;
+      color: var(--notion-purple);
+      margin-top: 6px;
       display: flex;
       gap: 8px;
+      font-weight: bold;
     }
 
     .mood-bar {
@@ -186,17 +221,27 @@
     }
 
     .mood-btn {
-      background: var(--bg);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: calc(var(--radius) / 2);
       padding: 6px;
       font-size: 14px;
       cursor: pointer;
-      transition: transform 0.1s, border-color 0.2s;
+      transition: transform 0.1s, border-color 0.2s, background-color 0.2s;
     }
 
+    /* Notion Tag Specific Color Accents for Mood Buttons */
+    #mbtn-happy { border-color: var(--notion-yellow); }
+    #mbtn-calm { border-color: var(--notion-green); }
+    #mbtn-tired { border-color: var(--notion-purple); }
+    #mbtn-sad { border-color: var(--notion-blue); }
+
     .mood-btn:active { transform: scale(0.9); }
-    .mood-btn.selected { border-color: var(--accent); background: var(--border); }
+    .mood-btn.selected#mbtn-happy { background-color: var(--notion-yellow-bg); }
+    .mood-btn.selected#mbtn-calm { background-color: var(--notion-green-bg); }
+    .mood-btn.selected#mbtn-tired { background-color: var(--notion-purple-bg); }
+    .mood-btn.selected#mbtn-sad { background-color: var(--notion-red-bg); }
+    
     .mood-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .overlay-panel {
@@ -211,7 +256,7 @@
       z-index: 10;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+      scrollbar-color: rgba(120, 119, 116, 0.3) transparent;
     }
 
     .hidden { display: none !important; }
@@ -224,12 +269,12 @@
 
     .setting-label {
       font-size: var(--ui-size);
-      color: var(--text-sub);
-      font-weight: 500;
+      color: var(--notion-orange);
+      font-weight: bold;
     }
 
     input[type="text"], select {
-      background: var(--bg);
+      background: var(--card-bg);
       color: var(--text);
       border: 1px solid var(--border);
       padding: 4px 6px;
@@ -239,7 +284,7 @@
     }
 
     .btn-primary {
-      background-color: var(--accent);
+      background-color: var(--notion-blue);
       color: #fff;
       border: none;
       padding: 6px;
@@ -248,10 +293,15 @@
       border-radius: calc(var(--radius) / 2);
       cursor: pointer;
       margin-top: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #1a62ab;
     }
 
     .instructions-box {
-      background: var(--bg);
+      background: var(--notion-cream);
       border: 1px solid var(--border);
       padding: 8px;
       border-radius: calc(var(--radius) / 2);
@@ -261,7 +311,7 @@
     }
   </style>
 </head>
-<body class="theme-dark style-retro lang-latin">
+<body class="theme-auto style-retro lang-latin">
 
   <div class="app-card">
     <div id="naming-screen" class="overlay-panel">
@@ -335,9 +385,10 @@
       <div class="setting-item">
         <label class="setting-label" id="label-theme">THEME</label>
         <select id="select-theme" onchange="updateTheme(this.value)">
+          <option value="theme-auto">Auto (Notion)</option>
+          <option value="theme-bright">Bright Light</option>
           <option value="theme-dark">Dark</option>
           <option value="theme-dim">Dim</option>
-          <option value="theme-bright">Bright</option>
         </select>
       </div>
 
@@ -598,7 +649,7 @@
     }
 
     function updateTheme(themeClass) {
-      document.body.classList.remove('theme-dark', 'theme-dim', 'theme-bright');
+      document.body.classList.remove('theme-auto', 'theme-dark', 'theme-dim', 'theme-bright');
       document.body.classList.add(themeClass);
     }
 
@@ -613,14 +664,14 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 16, 16);
 
-      // Pot Base & Rim
-      ctx.fillStyle = '#8b4513';
+      // Pot Base & Rim using Notion Terracotta / Orange palette accent
+      ctx.fillStyle = '#d9730d';
       ctx.fillRect(5, 12, 6, 3);
-      ctx.fillStyle = '#a0522d';
+      ctx.fillStyle = '#b35c05';
       ctx.fillRect(4, 11, 8, 1);
 
       // Main Stem
-      ctx.fillStyle = currentMood === 'sad' ? '#4a7c59' : '#2e7d32';
+      ctx.fillStyle = currentMood === 'sad' ? '#448361' : '#2e7d32';
       const stemHeight = growthStage === 1 ? 3 : growthStage === 2 ? 5 : 6;
       const startY = 11 - stemHeight;
 
@@ -631,8 +682,8 @@
         ctx.fillRect(7, startY, 2, stemHeight);
       }
 
-      // Leaves
-      const leafColors = { happy: '#4caf50', calm: '#66bb6a', tired: '#81c784', sad: '#5c8a67' };
+      // Leaves with Notion Green Palette
+      const leafColors = { happy: '#448361', calm: '#5ca278', tired: '#7cbfa1', sad: '#5c8a67' };
       ctx.fillStyle = leafColors[currentMood];
 
       if (currentMood === 'happy' || currentMood === 'calm') {
@@ -647,31 +698,31 @@
         ctx.fillRect(8, startY + 4, 2, 2);
       }
 
-      // Detailed Pixel Flower Blossom (Happy / High Growth)
+      // Flower Blossom with Notion Pink & Yellow Highlights
       if (currentMood === 'happy') {
         const flowerY = startY - 3;
 
         // Outer Petals
-        ctx.fillStyle = '#ff80ab';
-        ctx.fillRect(6, flowerY, 4, 4); // Main petal cluster
+        ctx.fillStyle = '#d15796'; // Notion Pink tag color
+        ctx.fillRect(6, flowerY, 4, 4);
 
-        // Cross-pattern highlights for realistic petal layers
-        ctx.fillStyle = '#ff4081';
-        ctx.fillRect(7, flowerY - 1, 2, 1); // Top petal
-        ctx.fillRect(7, flowerY + 4, 2, 1); // Bottom petal
-        ctx.fillRect(5, flowerY + 1, 1, 2); // Left petal
-        ctx.fillRect(10, flowerY + 1, 1, 2); // Right petal
+        // Cross-pattern highlights for petals
+        ctx.fillStyle = '#e86dae';
+        ctx.fillRect(7, flowerY - 1, 2, 1); // Top
+        ctx.fillRect(7, flowerY + 4, 2, 1); // Bottom
+        ctx.fillRect(5, flowerY + 1, 1, 2); // Left
+        ctx.fillRect(10, flowerY + 1, 1, 2); // Right
 
-        // Bright Yellow Center (Pistil / Core)
-        ctx.fillStyle = '#ffd54f';
+        // Bright Yellow Core (Notion Yellow accent)
+        ctx.fillStyle = '#d9931e';
         ctx.fillRect(7, flowerY + 1, 2, 2);
 
       } else if (currentMood === 'calm') {
-        // Closed/Tight Flower Bud
+        // Closed Flower Bud (Notion Purple Tip)
         const budY = startY - 2;
-        ctx.fillStyle = '#81c784'; // Green sepal base
+        ctx.fillStyle = '#448361'; // Green sepal base
         ctx.fillRect(7, budY + 1, 2, 2);
-        ctx.fillStyle = '#f48fb1'; // Bud tip
+        ctx.fillStyle = '#9065b0'; // Notion Purple bud tip
         ctx.fillRect(7, budY, 2, 1);
       }
     }
