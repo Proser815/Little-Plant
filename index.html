@@ -3,473 +3,291 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pixel Pal - Retro iOS Edition</title>
+  <title>Mini Pixel Plant</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ios-bg-glass: rgba(30, 32, 48, 0.75);
-      --ios-card-glass: rgba(255, 255, 255, 0.08);
-      --ios-border: rgba(255, 255, 255, 0.15);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent-pixel: #a7f3d0;
-      --accent-orange: #fbbf24;
-      --accent-pink: #f472b6;
-      --accent-blue: #60a5fa;
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-sub: #a0a0a0;
+      --border: #333333;
+      --accent: #4caf50;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --radius: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+    /* Retro Style Preset Overrides */
+    body.style-retro {
+      --font-family: 'Press Start 2P', monospace;
+      --radius: 0px;
     }
+
+    /* Theme Overrides */
+    body.theme-dark {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #ffffff;
+      --text-sub: #a0a0a0;
+      --border: #333333;
+    }
+
+    body.theme-dim {
+      --bg: #1f232a;
+      --card-bg: #2d3139;
+      --text: #e0e0e0;
+      --text-sub: #8b929e;
+      --border: #3e4451;
+    }
+
+    body.theme-bright {
+      --bg: #f0f2f5;
+      --card-bg: #ffffff;
+      --text: #111111;
+      --text-sub: #666666;
+      --border: #dddddd;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Press Start 2P', monospace;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: var(--text-main);
-      margin: 0;
-      padding: 12px;
+      font-family: var(--font-family);
+      background-color: var(--bg);
+      color: var(--text);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      font-size: 8px;
-      line-height: 1.6;
+      padding: 10px;
+      transition: background-color 0.2s, color 0.2s;
     }
 
-    /* iOS Glassmorphism Container */
+    /* Compact UI Container */
     .app-card {
-      background: var(--ios-bg-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--ios-border);
-      border-radius: 28px;
-      width: 100%;
-      max-width: 360px;
-      padding: 18px;
+      background-color: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      width: 240px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      align-items: center;
+      position: relative;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     }
 
-    /* Top Status Bar */
-    .status-bar {
+    .top-bar {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 8px;
     }
 
-    .badge {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 4px 8px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px;
+    }
+
+    /* Pixel Art Container */
+    .plant-canvas {
+      width: 96px;
+      height: 96px;
+      image-rendering: pixelated;
+      margin: 8px 0;
+    }
+
+    /* Minimal Dialogue Box */
+    .dialogue {
+      font-size: 10px;
+      text-align: center;
+      color: var(--text-sub);
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    body.style-retro .dialogue { font-size: 7px; }
+
+    /* Settings Screen Overlay */
+    .settings-panel {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+      overflow-y: auto;
     }
 
     .hidden { display: none !important; }
 
-    /* Character Selection */
-    .selection-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .char-card {
-      background: var(--ios-card-glass);
-      border: 1px solid var(--ios-border);
-      border-radius: 18px;
-      padding: 16px 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .char-card:active {
-      transform: scale(0.94);
-    }
-
-    .char-avatar {
-      font-size: 36px;
-      margin-bottom: 8px;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-    }
-
-    /* Stats Grid */
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-
-    .stat-box {
-      background: var(--ios-card-glass);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 8px 4px;
-      text-align: center;
-    }
-
-    .stat-label {
-      font-size: 6px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      display: block;
-    }
-
-    .stat-bar-outer {
-      background: rgba(0, 0, 0, 0.3);
-      height: 6px;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 2px;
-    }
-
-    .stat-bar-inner {
-      height: 100%;
-      background: var(--accent-pixel);
-      width: 50%;
-      transition: width 0.4s ease;
-      border-radius: 3px;
-    }
-
-    /* Animated Avatar Stage */
-    .stage {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 20px;
-      padding: 16px;
-      text-align: center;
-      position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .sprite-display {
-      font-size: 52px;
-      display: inline-block;
-      animation: float 3s infinite ease-in-out;
-      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4));
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    .sprite-display:active {
-      transform: scale(1.2) rotate(5deg);
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    /* Action Widget Buttons */
-    .action-row {
+    .setting-item {
       display: flex;
-      gap: 6px;
-      justify-content: center;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .action-btn {
-      flex: 1;
-      background: var(--ios-card-glass);
-      border: 1px solid var(--ios-border);
-      color: var(--text-main);
-      padding: 8px 4px;
-      border-radius: 12px;
+    .setting-label {
+      font-size: 9px;
+      color: var(--text-sub);
+    }
+    body.style-retro .setting-label { font-size: 6px; }
+
+    select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px;
       font-family: inherit;
-      font-size: 7px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      font-size: 10px;
+      border-radius: calc(var(--radius) / 2);
     }
-
-    .action-btn:active {
-      transform: scale(0.92);
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    /* Chat Section */
-    .chat-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      height: 120px;
-      overflow-y: auto;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      scroll-behavior: smooth;
-    }
-
-    .chat-box::-webkit-scrollbar {
-      width: 4px;
-    }
-    .chat-box::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 2px;
-    }
-
-    .msg {
-      max-width: 88%;
-      padding: 8px 10px;
-      border-radius: 12px;
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      word-break: break-word;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .msg.bot {
-      background: rgba(255, 255, 255, 0.1);
-      color: #e2e8f0;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-
-    .msg.user {
-      background: #3b82f6;
-      color: #ffffff;
-      align-self: flex-end;
-      text-align: right;
-      border-bottom-right-radius: 4px;
-    }
-
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .opt-btn {
-      font-family: inherit;
-      font-size: 7px;
-      background: var(--ios-card-glass);
-      color: var(--text-main);
-      border: 1px solid var(--ios-border);
-      padding: 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .opt-btn:active {
-      transform: scale(0.97);
-      background: rgba(255, 255, 255, 0.15);
-    }
+    body.style-retro select { font-size: 7px; }
   </style>
 </head>
-<body>
+<body class="theme-dark style-retro">
 
   <div class="app-card">
-    <!-- Header -->
-    <div class="status-bar">
-      <span style="color: var(--accent-orange);">PIXEL PAL</span>
-      <span class="badge" id="streak-badge">DAY 1 🔥</span>
+    <!-- Main Display Screen -->
+    <div id="main-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+      <div class="top-bar">
+        <span style="font-size: 8px;" id="title-text">PLANT</span>
+        <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
+      </div>
+
+      <!-- Pixel Canvas Plant Art -->
+      <canvas id="plantCanvas" class="plant-canvas" width="16" height="16"></canvas>
+
+      <div class="dialogue" id="dialogue-text">...</div>
     </div>
 
-    <!-- Screen 1: Selection -->
-    <div id="selection-screen">
-      <p style="text-align: center; margin: 12px 0; color: var(--text-muted);">SELECT YOUR COMPANION</p>
-      <div class="selection-grid">
-        <div class="char-card" onclick="selectChar('Sprout', '🌱')">
-          <div class="char-avatar">🌱</div>
-          <div style="color: var(--accent-pixel);">PLANT</div>
-        </div>
-        <div class="char-card" onclick="selectChar('Pebble', '🦊')">
-          <div class="char-avatar">🦊</div>
-          <div style="color: var(--accent-orange);">ANIMAL</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Screen 2: Main App -->
-    <div id="game-screen" class="hidden">
-      <!-- Status Stats -->
-      <div class="stats-container">
-        <div class="stat-box">
-          <span class="stat-label">MOOD</span>
-          <span id="stat-mood">HAPPY</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">ENERGY</span>
-          <div class="stat-bar-outer">
-            <div class="stat-bar-inner" id="energy-bar" style="width: 80%;"></div>
-          </div>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">BOND</span>
-          <div class="stat-bar-outer">
-            <div class="stat-bar-inner" id="bond-bar" style="width: 40%; background: var(--accent-pink);"></div>
-          </div>
-        </div>
+    <!-- Settings Overlay Screen -->
+    <div id="settings-screen" class="settings-panel hidden">
+      <div class="top-bar">
+        <span style="font-size: 8px;" id="settings-title">SETTINGS</span>
+        <button class="icon-btn" onclick="toggleSettings()">✖</button>
       </div>
 
-      <!-- Avatar Stage -->
-      <div class="stage">
-        <div class="sprite-display" id="char-sprite" onclick="petBuddy()">🌱</div>
+      <div class="setting-item">
+        <label class="setting-label" id="label-lang">LANGUAGE</label>
+        <select id="select-lang" onchange="updateLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="fa">فارسی</option>
+          <option value="it">Italiano</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+        </select>
       </div>
 
-      <!-- Functional Actions -->
-      <div class="action-row">
-        <button class="action-btn" onclick="feedBuddy()">
-          <span>🍎</span>
-          <span>FEED</span>
-        </button>
-        <button class="action-btn" onclick="triggerMiniTask()">
-          <span>⏱️</span>
-          <span>FOCUS</span>
-        </button>
-        <button class="action-btn" onclick="logWater()">
-          <span>💧</span>
-          <span>HYDRATE</span>
-        </button>
+      <div class="setting-item">
+        <label class="setting-label" id="label-ui">UI STYLE</label>
+        <select id="select-ui" onchange="updateStyle(this.value)">
+          <option value="style-retro">Retro (Pixel)</option>
+          <option value="style-modern">Modern</option>
+        </select>
       </div>
 
-      <!-- Dialogue Log -->
-      <div class="chat-box" id="chat-box"></div>
-
-      <!-- Dynamic Response Options -->
-      <div class="options-grid" id="options-box"></div>
+      <div class="setting-item">
+        <label class="setting-label" id="label-theme">THEME</label>
+        <select id="select-theme" onchange="updateTheme(this.value)">
+          <option value="theme-dark">Dark</option>
+          <option value="theme-dim">Dim</option>
+          <option value="theme-bright">Bright</option>
+        </select>
+      </div>
     </div>
   </div>
 
   <script>
-    let companion = { name: '', sprite: '', energy: 80, bond: 40, streak: 1 };
-
-    const dialogues = {
-      start: {
-        text: "Hey! Glad you checked in today. How are you feeling right now?",
-        options: [
-          { label: "Good & ready to lock in!", next: "good" },
-          { label: "Feeling a bit drained...", next: "tired" },
-          { label: "Stressed about my tasks.", next: "stressed" }
-        ]
-      },
-      good: {
-        text: "Awesome energy! Want to do a quick 5-min focus session with me?",
-        options: [
-          { label: "Let's do it! Start timer.", action: "focus" },
-          { label: "Just chatting today.", next: "chat" }
-        ]
-      },
-      tired: {
-        text: "I hear you. Don't forget to take a sip of water and rest your eyes.",
-        options: [
-          { label: "Hydrate together 💧", action: "hydrate" },
-          { label: "I'll take it easy.", next: "chat" }
-        ]
-      },
-      stressed: {
-        text: "Take a deep breath. We can tackle things one small step at a time.",
-        options: [
-          { label: "Thanks buddy, feeling better.", next: "chat" }
-        ]
-      },
-      chat: {
-        text: "I'm always chilling right here on your page whenever you need me! ✨",
-        options: [
-          { label: "Reset Dialogue", next: "start" }
-        ]
-      }
+    // Localization Data
+    const i18n = {
+      en: { title: "PLANT", settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME", msg: "Growing quietly..." },
+      zh: { title: "小植物", settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题", msg: "正在安静地生长..." },
+      ja: { title: "ピクセル植物", settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ", msg: "静かに成長中..." },
+      ko: { title: "픽셀 식물", settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마", msg: "조용히 자라는 중..." },
+      fa: { title: "گیاه پیکسل", settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم", msg: "در حال رشد..." },
+      it: { title: "PIANTA", settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA", msg: "Crescendo in silenzio..." },
+      de: { title: "PFLANZE", settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA", msg: "Wächst leise..." },
+      es: { title: "PLANTA", settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA", msg: "Creciendo en silencio..." },
+      fr: { title: "PLANTE", settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME", msg: "Pousse doucement..." }
     };
 
-    function selectChar(name, sprite) {
-      companion.name = name;
-      companion.sprite = sprite;
-      document.getElementById('char-sprite').textContent = sprite;
+    let currentLang = 'en';
 
-      document.getElementById('selection-screen').classList.add('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
-
-      loadDialogue('start');
+    function toggleSettings() {
+      document.getElementById('settings-screen').classList.toggle('hidden');
     }
 
-    function addMessage(text, sender) {
-      const chatBox = document.getElementById('chat-box');
-      const msg = document.createElement('div');
-      msg.className = `msg ${sender}`;
-      msg.textContent = sender === 'bot' ? `${companion.sprite} ${text}` : text;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    function updateLanguage(lang) {
+      currentLang = lang;
+      const t = i18n[lang] || i18n.en;
+      document.getElementById('title-text').textContent = t.title;
+      document.getElementById('settings-title').textContent = t.settings;
+      document.getElementById('label-lang').textContent = t.lang;
+      document.getElementById('label-ui').textContent = t.ui;
+      document.getElementById('label-theme').textContent = t.theme;
+      document.getElementById('dialogue-text').textContent = t.msg;
+
+      // Handle RTL for Persian
+      document.body.dir = lang === 'fa' ? 'rtl' : 'ltr';
     }
 
-    function loadDialogue(key) {
-      const node = dialogues[key];
-      if (!node) return;
-
-      addMessage(node.text, 'bot');
-
-      const optionsBox = document.getElementById('options-box');
-      optionsBox.innerHTML = '';
-
-      node.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.textContent = opt.label;
-        btn.onclick = () => {
-          addMessage(opt.label, 'user');
-          optionsBox.innerHTML = '';
-          setTimeout(() => {
-            if (opt.action === 'focus') triggerMiniTask();
-            else if (opt.action === 'hydrate') logWater();
-            else if (opt.next) loadDialogue(opt.next);
-          }, 400);
-        };
-        optionsBox.appendChild(btn);
-      });
+    function updateStyle(styleClass) {
+      document.body.classList.remove('style-retro', 'style-modern');
+      document.body.classList.add(styleClass);
     }
 
-    /* Extra Game Functions */
-    function petBuddy() {
-      companion.bond = Math.min(100, companion.bond + 10);
-      document.getElementById('bond-bar').style.width = companion.bond + '%';
-      addMessage("*Happy pixel sounds!* (+10 Bond)", 'bot');
+    function updateTheme(themeClass) {
+      document.body.classList.remove('theme-dark', 'theme-dim', 'theme-bright');
+      document.body.classList.add(themeClass);
     }
 
-    function feedBuddy() {
-      companion.energy = Math.min(100, companion.energy + 15);
-      document.getElementById('energy-bar').style.width = companion.energy + '%';
-      addMessage("Yum! Thanks for the snack! (+15 Energy)", 'bot');
+    // Render Procedural Pixel Art Plant
+    function drawPixelPlant() {
+      const canvas = document.getElementById('plantCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 16, 16);
+
+      // Pot (Brown Pixel Art)
+      ctx.fillStyle = '#8b4513';
+      ctx.fillRect(5, 11, 6, 4);
+      ctx.fillStyle = '#a0522d';
+      ctx.fillRect(4, 10, 8, 1);
+
+      // Stem (Green)
+      ctx.fillStyle = '#2e7d32';
+      ctx.fillRect(7, 5, 2, 5);
+
+      // Leaves (Lighter Green)
+      ctx.fillStyle = '#4caf50';
+      ctx.fillRect(5, 6, 2, 2);
+      ctx.fillRect(9, 7, 2, 2);
+      ctx.fillRect(7, 3, 2, 2);
+
+      // Highlights
+      ctx.fillStyle = '#81c784';
+      ctx.fillRect(5, 6, 1, 1);
+      ctx.fillRect(7, 3, 1, 1);
     }
 
-    function logWater() {
-      petBuddy();
-      addMessage("Gulp gulp... Stay hydrated! (+10 Bond)", 'bot');
-    }
-
-    function triggerMiniTask() {
-      addMessage("Starting 5-minute focus mode! Stay on task...", 'bot');
-      let seconds = 5 * 60;
-      const optionsBox = document.getElementById('options-box');
-      optionsBox.innerHTML = `<div style="text-align:center; padding: 8px; color: var(--accent-orange);" id="timer-display">05:00</div>`;
-
-      const interval = setInterval(() => {
-        seconds--;
-        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const s = (seconds % 60).toString().padStart(2, '0');
-        const timerEl = document.getElementById('timer-display');
-        if (timerEl) timerEl.textContent = `${m}:${s}`;
-
-        if (seconds <= 0) {
-          clearInterval(interval);
-          addMessage("Focus session complete! Great work! 🎉", 'bot');
-          loadDialogue('chat');
-        }
-      }, 1000);
-    }
+    // Initialize
+    drawPixelPlant();
+    updateLanguage('en');
   </script>
 </body>
 </html>
