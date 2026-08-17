@@ -80,8 +80,8 @@
       background-color: var(--card-bg);
       border: 2px solid var(--border);
       border-radius: var(--radius);
-      width: 240px;
-      padding: 14px;
+      width: 260px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -112,10 +112,9 @@
       padding: 2px;
     }
 
-    /* Plant canvas with CSS smooth transition */
     .plant-canvas {
-      width: 96px;
-      height: 96px;
+      width: 112px;
+      height: 112px;
       image-rendering: pixelated;
       margin: 4px 0;
       cursor: pointer;
@@ -131,12 +130,12 @@
       font-size: var(--dialogue-size);
       text-align: center;
       color: var(--text-sub);
-      min-height: 36px;
+      min-height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-top: 2px;
-      line-height: 1.3;
+      line-height: 1.35;
       font-weight: 500;
       padding: 0 4px;
     }
@@ -151,8 +150,8 @@
 
     .mood-bar {
       display: flex;
-      gap: 4px;
-      margin-top: 6px;
+      gap: 6px;
+      margin-top: 8px;
       justify-content: center;
       width: 100%;
     }
@@ -161,8 +160,8 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: calc(var(--radius) / 2);
-      padding: 4px;
-      font-size: 12px;
+      padding: 6px;
+      font-size: 14px;
       cursor: pointer;
       transition: transform 0.1s, border-color 0.2s;
     }
@@ -322,7 +321,7 @@
         welcome: "WELCOME", start: "START", namePlant: "NAME YOUR PLANT", editName: "PLANT NAME",
         settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME",
         stage: "STAGE", chances: "CHANCES", howTo: "HOW IT WORKS",
-        instructions: "Log your mood up to 4 times a day. Your plant reflects your current mood with smooth transitions. At the end of the day, your daily average is calculated—positive vibes help your plant grow over time!",
+        instructions: "Log your mood up to 4 times a day. Your plant reflects your mood with smooth state transitions. At the end of the day, your average score is tallied—positive vibes will help your plant bloom!",
         summary: "Daily summary logged! Average mood: ",
         noChances: "No check-ins left today. See you tomorrow!",
         moods: {
@@ -336,7 +335,7 @@
         welcome: "欢迎", start: "开始", namePlant: "给小植物取名", editName: "植物名字",
         settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题",
         stage: "阶段", chances: "剩余次数", howTo: "使用说明",
-        instructions: "每天可记录最多 4 次心情。植物会根据你的当前心情平滑变幻形态。一天结束时将计算平均心情—保持积极情绪能让植物逐渐成长！",
+        instructions: "每天可记录最多 4 次心情。植物会根据你的心情平滑变幻形态。一天结束时计算平均值—保持积极情绪可让植物开出鲜花！",
         summary: "今日记录完成！平均心情：",
         noChances: "今天次数已用完，明天见！",
         moods: {
@@ -350,7 +349,7 @@
         welcome: "ようこそ", start: "スタート", namePlant: "名前をつけてね", editName: "植物の名前",
         settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ",
         stage: "ステージ", chances: "残り回数", howTo: "遊び方",
-        instructions: "1日最大4回まで気分を記録できます。植物は現在の気分に応じてスムーズに変化します。1日の終わりに平均気分が計算され、ポジティブな気分で植物が成長します！",
+        instructions: "1日最大4回まで気分を記録できます。植物は現在の気分に応じてスムーズに変化します。1日の終わりに平均気分が計算され、ポジティブな気分で綺麗な花が咲きます！",
         summary: "今日の記録が完了しました！平均気分：",
         noChances: "今日のチェックインは終了しました。また明日！",
         moods: {
@@ -364,7 +363,7 @@
         welcome: "환영합니다", start: "시작하기", namePlant: "식물 이름 짓기", editName: "식물 이름",
         settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마",
         stage: "단계", chances: "기회", howTo: "사용 방법",
-        instructions: "하루에 최대 4번 기분을 기록할 수 있습니다. 식물은 현재 기분에 따라 유연하게 변합니다. 하루가 지나면 평균 기분이 계산되며, 긍정적인 마음이 식물을 성장시킵니다!",
+        instructions: "하루에 최대 4번 기분을 기록할 수 있습니다. 식물은 현재 기분에 따라 유연하게 변합니다. 하루 평균 점수가 집계되며 긍정적인 마음이 예쁜 꽃을 피워냅니다!",
         summary: "오늘의 요약 완료! 평균 기분: ",
         noChances: "오늘의 체크인이 끝났습니다. 내일 봐요!",
         moods: {
@@ -378,7 +377,7 @@
         welcome: "خوش آمدید", start: "شروع", namePlant: "نام‌گذاری گیاه", editName: "نام گیاه",
         settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم",
         stage: "مرحله", chances: "فرصت‌ها", howTo: "راهنما",
-        instructions: "روزانه تا ۴ بار حال خود را ثبت کنید. گیاه شما با انیمیشن نرم تغییر شکل می‌دهد. در پایان روز میانگین حس شما محاسبه شده و احساسات مثبت باعث رشد گیاه می‌شود!",
+        instructions: "روزانه تا ۴ بار حال خود را ثبت کنید. گیاه شما با انیمیشن نرم تغییر شکل می‌دهد. احساسات مثبت باعث رشد و شکفتن گل‌های زیبا می‌شود!",
         summary: "خلاصه امروز ثبت شد! میانگین احساس: ",
         noChances: "فرصت‌های امروز تمام شد. فردا می‌بینمت!",
         moods: {
@@ -392,7 +391,7 @@
         welcome: "BENVENUTO", start: "INIZIA", namePlant: "NOME PIANTA", editName: "NOME PIANTA",
         settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA",
         stage: "STADIO", chances: "TENTATIVI", howTo: "COME FUNZIONA",
-        instructions: "Registra il tuo umore fino a 4 volte al giorno. La tua pianta cambierà in modo fluido. A fine giornata verrà calcolata la media: i pensieri positivi la faranno crescere!",
+        instructions: "Registra il tuo umore fino a 4 volte al giorno. La tua pianta cambierà in modo fluido. A fine giornata verrà calcolata la media: i pensieri positivi faranno sbocciare un bel fiore!",
         summary: "Riepilogo giornaliero registrato! Umore medio: ",
         noChances: "Nessun tentativo rimasto per oggi. A domani!",
         moods: {
@@ -406,7 +405,7 @@
         welcome: "WILLKOMMEN", start: "START", namePlant: "PFLANZE BENENNEN", editName: "PFLANZENNAME",
         settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA",
         stage: "STUFE", chances: "CHANCEN", howTo: "ANLEITUNG",
-        instructions: "Trage deine Stimmung bis zu 4 Mal am Tag ein. Deine Pflanze verwandelt sich fließend. Am Tagesende wird der Durchschnitt berechnet – positive Energie lässt sie wachsen!",
+        instructions: "Trage deine Stimmung bis zu 4 Mal am Tag ein. Deine Pflanze verwandelt sich fließend. Positive Energie lässt wunderschöne Blüten erblühen!",
         summary: "Tageszusammenfassung gespeichert! Durchschnitt: ",
         noChances: "Keine Versuche mehr für heute. Bis morgen!",
         moods: {
@@ -420,7 +419,7 @@
         welcome: "BIENVENIDO", start: "EMPEZAR", namePlant: "NOMBRA TU PLANTA", editName: "NOMBRE PLANTA",
         settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA",
         stage: "ETAPA", chances: "INTENTOS", howTo: "CÓMO FUNCIONA",
-        instructions: "Registra tu estado de ánimo hasta 4 veces al día. Tu planta cambia con animaciones suaves. Al final del día se calcula el promedio: ¡las buenas vibras la hacen crecer!",
+        instructions: "Registra tu estado de ánimo hasta 4 veces al día. Tu planta cambia con animaciones suaves. ¡Las buenas vibras harán florecer hermosas pétalos!",
         summary: "¡Resumen diario guardado! Promedio: ",
         noChances: "No quedan intentos hoy. ¡Hasta mañana!",
         moods: {
@@ -434,7 +433,7 @@
         welcome: "BIENVENUE", start: "COMMENCER", namePlant: "NOMME TA PLANTE", editName: "NOM PLANTE",
         settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME",
         stage: "ÉTAPE", chances: "ESSAIS", howTo: "COMMENT ÇA MARCHE",
-        instructions: "Enregistre ton humeur jusqu'à 4 fois par jour. Ta plante se métamorphose en douceur. En fin de journée, la moyenne est calculée : les bonnes ondes la font grandir !",
+        instructions: "Enregistre ton humeur jusqu'à 4 fois par jour. Ta plante se métamorphose en douceur. Les bonnes ondes feront éclore une magnifique fleur !",
         summary: "Résumé quotidien enregistré ! Moyenne : ",
         noChances: "Plus d'essais aujourd'hui. À demain !",
         moods: {
@@ -486,7 +485,6 @@
       chancesLeft--;
       moodScores.push(score);
 
-      // Smooth state transition animation
       const canvas = document.getElementById('plantCanvas');
       canvas.classList.add('morphing');
       
@@ -517,7 +515,6 @@
       let summaryLabel = avg >= 2.25 ? "😊" : avg >= 1.5 ? "😌" : avg >= 0.75 ? "😴" : "🌧️";
       document.getElementById('dialogue-text').textContent = `${t.summary} ${summaryLabel}. ${t.noChances}`;
       
-      // Disable buttons when chances run out
       document.querySelectorAll('.mood-btn').forEach(btn => btn.disabled = true);
       drawPixelPlant();
     }
@@ -585,16 +582,16 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 16, 16);
 
-      // Pot
+      // Pot Base & Rim
       ctx.fillStyle = '#8b4513';
-      ctx.fillRect(5, 11, 6, 4);
+      ctx.fillRect(5, 12, 6, 3);
       ctx.fillStyle = '#a0522d';
-      ctx.fillRect(4, 10, 8, 1);
+      ctx.fillRect(4, 11, 8, 1);
 
-      // Stem (Grows higher based on growthStage)
+      // Main Stem
       ctx.fillStyle = currentMood === 'sad' ? '#4a7c59' : '#2e7d32';
-      const stemHeight = growthStage === 1 ? 3 : growthStage === 2 ? 5 : 7;
-      const startY = 10 - stemHeight;
+      const stemHeight = growthStage === 1 ? 3 : growthStage === 2 ? 5 : 6;
+      const startY = 11 - stemHeight;
 
       if (currentMood === 'tired' || currentMood === 'sad') {
         ctx.fillRect(7, startY + 2, 2, stemHeight - 1);
@@ -612,15 +609,39 @@
         ctx.fillRect(9, startY + 3, 2, 2);
         if (growthStage >= 2) {
           ctx.fillRect(4, startY + 4, 2, 2);
-          ctx.fillRect(10, startY + 5, 2, 2);
-        }
-        if (currentMood === 'happy') {
-          ctx.fillStyle = '#f48fb1';
-          ctx.fillRect(7, startY - 1, 2, 1); // Flower bloom
+          ctx.fillRect(10, startY + 4, 2, 2);
         }
       } else {
         ctx.fillRect(4, startY + 3, 2, 2);
         ctx.fillRect(8, startY + 4, 2, 2);
+      }
+
+      // Detailed Pixel Flower Blossom (Happy / High Growth)
+      if (currentMood === 'happy') {
+        const flowerY = startY - 3;
+
+        // Outer Petals
+        ctx.fillStyle = '#ff80ab';
+        ctx.fillRect(6, flowerY, 4, 4); // Main petal cluster
+
+        // Cross-pattern highlights for realistic petal layers
+        ctx.fillStyle = '#ff4081';
+        ctx.fillRect(7, flowerY - 1, 2, 1); // Top petal
+        ctx.fillRect(7, flowerY + 4, 2, 1); // Bottom petal
+        ctx.fillRect(5, flowerY + 1, 1, 2); // Left petal
+        ctx.fillRect(10, flowerY + 1, 1, 2); // Right petal
+
+        // Bright Yellow Center (Pistil / Core)
+        ctx.fillStyle = '#ffd54f';
+        ctx.fillRect(7, flowerY + 1, 2, 2);
+
+      } else if (currentMood === 'calm') {
+        // Closed/Tight Flower Bud
+        const budY = startY - 2;
+        ctx.fillStyle = '#81c784'; // Green sepal base
+        ctx.fillRect(7, budY + 1, 2, 2);
+        ctx.fillStyle = '#f48fb1'; // Bud tip
+        ctx.fillRect(7, budY, 2, 1);
       }
     }
 
