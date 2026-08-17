@@ -30,7 +30,6 @@
       --ui-size: 7px;
     }
 
-    /* Fallback and clean rendering for Non-Latin Character Sets */
     body.lang-cjk.style-retro,
     body.lang-rtl.style-retro {
       --font-family: var(--font-cjk);
@@ -113,26 +112,41 @@
       padding: 2px;
     }
 
+    /* Plant canvas with CSS smooth transition */
     .plant-canvas {
       width: 96px;
       height: 96px;
       image-rendering: pixelated;
       margin: 4px 0;
       cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .plant-canvas.morphing {
+      opacity: 0.3;
+      transform: scale(0.85);
     }
 
     .dialogue {
       font-size: var(--dialogue-size);
       text-align: center;
       color: var(--text-sub);
-      min-height: 32px;
+      min-height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 4px;
-      line-height: 1.4;
+      margin-top: 2px;
+      line-height: 1.3;
       font-weight: 500;
       padding: 0 4px;
+    }
+
+    .status-tracker {
+      font-size: calc(var(--ui-size) - 1px);
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: flex;
+      gap: 8px;
     }
 
     .mood-bar {
@@ -150,11 +164,12 @@
       padding: 4px;
       font-size: 12px;
       cursor: pointer;
-      transition: transform 0.1s;
+      transition: transform 0.1s, border-color 0.2s;
     }
 
     .mood-btn:active { transform: scale(0.9); }
     .mood-btn.selected { border-color: var(--accent); background: var(--border); }
+    .mood-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .overlay-panel {
       position: absolute;
@@ -204,6 +219,16 @@
       cursor: pointer;
       margin-top: 4px;
     }
+
+    .instructions-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: calc(var(--radius) / 2);
+      font-size: calc(var(--ui-size) - 1px);
+      line-height: 1.4;
+      color: var(--text-sub);
+    }
   </style>
 </head>
 <body class="theme-dark style-retro lang-latin">
@@ -230,11 +255,16 @@
 
       <div class="dialogue" id="dialogue-text">...</div>
 
+      <div class="status-tracker">
+        <span id="stage-text">STAGE 1</span> | 
+        <span id="chances-text">CHANCES: 4/4</span>
+      </div>
+
       <div class="mood-bar">
-        <button class="mood-btn" onclick="setMood('happy')" title="Happy">😊</button>
-        <button class="mood-btn" onclick="setMood('calm')" title="Calm">😌</button>
-        <button class="mood-btn" onclick="setMood('tired')" title="Tired">😴</button>
-        <button class="mood-btn" onclick="setMood('sad')" title="Sad">🌧️</button>
+        <button class="mood-btn" id="mbtn-happy" onclick="logMood('happy', 3)" title="Happy">😊</button>
+        <button class="mood-btn" id="mbtn-calm" onclick="logMood('calm', 2)" title="Calm">😌</button>
+        <button class="mood-btn" id="mbtn-tired" onclick="logMood('tired', 1)" title="Tired">😴</button>
+        <button class="mood-btn" id="mbtn-sad" onclick="logMood('sad', 0)" title="Sad">🌧️</button>
       </div>
     </div>
 
@@ -280,6 +310,9 @@
           <option value="theme-bright">Bright</option>
         </select>
       </div>
+
+      <button class="btn-primary" onclick="toggleInstructions()" id="btn-how-to">HOW IT WORKS</button>
+      <div id="instructions-box" class="instructions-box hidden"></div>
     </div>
   </div>
 
@@ -288,6 +321,10 @@
       en: { 
         welcome: "WELCOME", start: "START", namePlant: "NAME YOUR PLANT", editName: "PLANT NAME",
         settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME",
+        stage: "STAGE", chances: "CHANCES", howTo: "HOW IT WORKS",
+        instructions: "Log your mood up to 4 times a day. Your plant reflects your current mood with smooth transitions. At the end of the day, your daily average is calculated—positive vibes help your plant grow over time!",
+        summary: "Daily summary logged! Average mood: ",
+        noChances: "No check-ins left today. See you tomorrow!",
         moods: {
           happy: "blooming bright with your happiness! ✨",
           calm: "swaying gently in peaceful thoughts. 🌿",
@@ -298,6 +335,10 @@
       zh: { 
         welcome: "欢迎", start: "开始", namePlant: "给小植物取名", editName: "植物名字",
         settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题",
+        stage: "阶段", chances: "剩余次数", howTo: "使用说明",
+        instructions: "每天可记录最多 4 次心情。植物会根据你的当前心情平滑变幻形态。一天结束时将计算平均心情—保持积极情绪能让植物逐渐成长！",
+        summary: "今日记录完成！平均心情：",
+        noChances: "今天次数已用完，明天见！",
         moods: {
           happy: "因你的快乐而明亮绽放！✨",
           calm: "在平淡的思想中微微摇曳。🌿",
@@ -308,6 +349,10 @@
       ja: { 
         welcome: "ようこそ", start: "スタート", namePlant: "名前をつけてね", editName: "植物の名前",
         settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ",
+        stage: "ステージ", chances: "残り回数", howTo: "遊び方",
+        instructions: "1日最大4回まで気分を記録できます。植物は現在の気分に応じてスムーズに変化します。1日の終わりに平均気分が計算され、ポジティブな気分で植物が成長します！",
+        summary: "今日の記録が完了しました！平均気分：",
+        noChances: "今日のチェックインは終了しました。また明日！",
         moods: {
           happy: "あなたの嬉しさに合わせて咲いています！✨",
           calm: "穏やかな心で静かにゆれています。🌿",
@@ -318,6 +363,10 @@
       ko: { 
         welcome: "환영합니다", start: "시작하기", namePlant: "식물 이름 짓기", editName: "식물 이름",
         settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마",
+        stage: "단계", chances: "기회", howTo: "사용 방법",
+        instructions: "하루에 최대 4번 기분을 기록할 수 있습니다. 식물은 현재 기분에 따라 유연하게 변합니다. 하루가 지나면 평균 기분이 계산되며, 긍정적인 마음이 식물을 성장시킵니다!",
+        summary: "오늘의 요약 완료! 평균 기분: ",
+        noChances: "오늘의 체크인이 끝났습니다. 내일 봐요!",
         moods: {
           happy: "당신의 행복으로 밝게 피어납니다! ✨",
           calm: "평온한 마음 속에서 잔잔히 흔들립니다. 🌿",
@@ -328,6 +377,10 @@
       fa: { 
         welcome: "خوش آمدید", start: "شروع", namePlant: "نام‌گذاری گیاه", editName: "نام گیاه",
         settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم",
+        stage: "مرحله", chances: "فرصت‌ها", howTo: "راهنما",
+        instructions: "روزانه تا ۴ بار حال خود را ثبت کنید. گیاه شما با انیمیشن نرم تغییر شکل می‌دهد. در پایان روز میانگین حس شما محاسبه شده و احساسات مثبت باعث رشد گیاه می‌شود!",
+        summary: "خلاصه امروز ثبت شد! میانگین احساس: ",
+        noChances: "فرصت‌های امروز تمام شد. فردا می‌بینمت!",
         moods: {
           happy: "با شادی شما روشن می‌شوم! ✨",
           calm: "آرام در افکار خنک می‌رقصم. 🌿",
@@ -338,6 +391,10 @@
       it: { 
         welcome: "BENVENUTO", start: "INIZIA", namePlant: "NOME PIANTA", editName: "NOME PIANTA",
         settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA",
+        stage: "STADIO", chances: "TENTATIVI", howTo: "COME FUNZIONA",
+        instructions: "Registra il tuo umore fino a 4 volte al giorno. La tua pianta cambierà in modo fluido. A fine giornata verrà calcolata la media: i pensieri positivi la faranno crescere!",
+        summary: "Riepilogo giornaliero registrato! Umore medio: ",
+        noChances: "Nessun tentativo rimasto per oggi. A domani!",
         moods: {
           happy: "fiorisce felicemente con te! ✨",
           calm: "dondola dolcemente in pace. 🌿",
@@ -348,6 +405,10 @@
       de: { 
         welcome: "WILLKOMMEN", start: "START", namePlant: "PFLANZE BENENNEN", editName: "PFLANZENNAME",
         settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA",
+        stage: "STUFE", chances: "CHANCEN", howTo: "ANLEITUNG",
+        instructions: "Trage deine Stimmung bis zu 4 Mal am Tag ein. Deine Pflanze verwandelt sich fließend. Am Tagesende wird der Durchschnitt berechnet – positive Energie lässt sie wachsen!",
+        summary: "Tageszusammenfassung gespeichert! Durchschnitt: ",
+        noChances: "Keine Versuche mehr für heute. Bis morgen!",
         moods: {
           happy: "blüht hell mit deiner Freude! ✨",
           calm: "wiegt sanft in stillen Gedanken. 🌿",
@@ -358,6 +419,10 @@
       es: { 
         welcome: "BIENVENIDO", start: "EMPEZAR", namePlant: "NOMBRA TU PLANTA", editName: "NOMBRE PLANTA",
         settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA",
+        stage: "ETAPA", chances: "INTENTOS", howTo: "CÓMO FUNCIONA",
+        instructions: "Registra tu estado de ánimo hasta 4 veces al día. Tu planta cambia con animaciones suaves. Al final del día se calcula el promedio: ¡las buenas vibras la hacen crecer!",
+        summary: "¡Resumen diario guardado! Promedio: ",
+        noChances: "No quedan intentos hoy. ¡Hasta mañana!",
         moods: {
           happy: "¡florece brillante con tu alegría! ✨",
           calm: "se mece suavemente en calma. 🌿",
@@ -368,6 +433,10 @@
       fr: { 
         welcome: "BIENVENUE", start: "COMMENCER", namePlant: "NOMME TA PLANTE", editName: "NOM PLANTE",
         settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME",
+        stage: "ÉTAPE", chances: "ESSAIS", howTo: "COMMENT ÇA MARCHE",
+        instructions: "Enregistre ton humeur jusqu'à 4 fois par jour. Ta plante se métamorphose en douceur. En fin de journée, la moyenne est calculée : les bonnes ondes la font grandir !",
+        summary: "Résumé quotidien enregistré ! Moyenne : ",
+        noChances: "Plus d'essais aujourd'hui. À demain !",
         moods: {
           happy: "fleurit joyeusement avec toi ! ✨",
           calm: "balance doucement dans le calme. 🌿",
@@ -380,6 +449,9 @@
     let currentLang = 'en';
     let plantName = 'Sprout';
     let currentMood = 'happy';
+    let chancesLeft = 4;
+    let moodScores = [];
+    let growthStage = 1;
 
     function saveInitialName() {
       const input = document.getElementById('initial-name-input').value.trim();
@@ -388,6 +460,7 @@
       document.getElementById('plant-display-name').textContent = plantName;
       document.getElementById('naming-screen').classList.add('hidden');
       updateDialogue();
+      updateTrackerUI();
     }
 
     function updatePlantName(newName) {
@@ -402,12 +475,57 @@
       document.getElementById('settings-screen').classList.toggle('hidden');
     }
 
-    function setMood(mood) {
+    function toggleInstructions() {
+      document.getElementById('instructions-box').classList.toggle('hidden');
+    }
+
+    function logMood(mood, score) {
+      if (chancesLeft <= 0) return;
+
       currentMood = mood;
+      chancesLeft--;
+      moodScores.push(score);
+
+      // Smooth state transition animation
+      const canvas = document.getElementById('plantCanvas');
+      canvas.classList.add('morphing');
+      
+      setTimeout(() => {
+        drawPixelPlant();
+        canvas.classList.remove('morphing');
+      }, 200);
+
       document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
-      event.target.classList.add('selected');
+      document.getElementById(`mbtn-${mood}`).classList.add('selected');
+
+      if (chancesLeft === 0) {
+        summarizeDailyMood();
+      } else {
+        updateDialogue();
+      }
+
+      updateTrackerUI();
+    }
+
+    function summarizeDailyMood() {
+      const avg = moodScores.reduce((a, b) => a + b, 0) / moodScores.length;
+      if (avg >= 2 && growthStage < 3) {
+        growthStage++;
+      }
+      
+      const t = i18n[currentLang] || i18n.en;
+      let summaryLabel = avg >= 2.25 ? "😊" : avg >= 1.5 ? "😌" : avg >= 0.75 ? "😴" : "🌧️";
+      document.getElementById('dialogue-text').textContent = `${t.summary} ${summaryLabel}. ${t.noChances}`;
+      
+      // Disable buttons when chances run out
+      document.querySelectorAll('.mood-btn').forEach(btn => btn.disabled = true);
       drawPixelPlant();
-      updateDialogue();
+    }
+
+    function updateTrackerUI() {
+      const t = i18n[currentLang] || i18n.en;
+      document.getElementById('stage-text').textContent = `${t.stage} ${growthStage}`;
+      document.getElementById('chances-text').textContent = `${t.chances}: ${chancesLeft}/4`;
     }
 
     function updateDialogue() {
@@ -420,7 +538,6 @@
       currentLang = lang;
       const t = i18n[lang] || i18n.en;
 
-      // Handle custom typography fallback for character-based languages
       document.body.classList.remove('lang-cjk', 'lang-rtl', 'lang-latin');
       if (['zh', 'ja', 'ko'].includes(lang)) {
         document.body.classList.add('lang-cjk');
@@ -438,9 +555,13 @@
       document.getElementById('label-lang').textContent = t.lang;
       document.getElementById('label-ui').textContent = t.ui;
       document.getElementById('label-theme').textContent = t.theme;
+      document.getElementById('btn-how-to').textContent = t.howTo;
+      document.getElementById('instructions-box').textContent = t.instructions;
 
       document.body.dir = lang === 'fa' ? 'rtl' : 'ltr';
-      updateDialogue();
+      
+      if (chancesLeft > 0) updateDialogue();
+      updateTrackerUI();
     }
 
     function updateStyle(styleClass) {
@@ -464,41 +585,42 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 16, 16);
 
+      // Pot
       ctx.fillStyle = '#8b4513';
       ctx.fillRect(5, 11, 6, 4);
       ctx.fillStyle = '#a0522d';
       ctx.fillRect(4, 10, 8, 1);
 
+      // Stem (Grows higher based on growthStage)
       ctx.fillStyle = currentMood === 'sad' ? '#4a7c59' : '#2e7d32';
-      
+      const stemHeight = growthStage === 1 ? 3 : growthStage === 2 ? 5 : 7;
+      const startY = 10 - stemHeight;
+
       if (currentMood === 'tired' || currentMood === 'sad') {
-        ctx.fillRect(7, 7, 2, 3);
-        ctx.fillRect(6, 5, 2, 2);
+        ctx.fillRect(7, startY + 2, 2, stemHeight - 1);
+        ctx.fillRect(6, startY, 2, 2);
       } else {
-        ctx.fillRect(7, 5, 2, 5);
+        ctx.fillRect(7, startY, 2, stemHeight);
       }
 
-      const leafColors = {
-        happy: '#4caf50',
-        calm: '#66bb6a',
-        tired: '#81c784',
-        sad: '#5c8a67'
-      };
+      // Leaves
+      const leafColors = { happy: '#4caf50', calm: '#66bb6a', tired: '#81c784', sad: '#5c8a67' };
       ctx.fillStyle = leafColors[currentMood];
 
-      if (currentMood === 'happy') {
-        ctx.fillRect(5, 6, 2, 2);
-        ctx.fillRect(9, 7, 2, 2);
-        ctx.fillRect(7, 3, 2, 2);
-        ctx.fillStyle = '#f48fb1';
-        ctx.fillRect(7, 2, 2, 1);
-      } else if (currentMood === 'calm') {
-        ctx.fillRect(5, 6, 2, 2);
-        ctx.fillRect(9, 7, 2, 2);
-        ctx.fillRect(7, 3, 2, 2);
+      if (currentMood === 'happy' || currentMood === 'calm') {
+        ctx.fillRect(5, startY + 2, 2, 2);
+        ctx.fillRect(9, startY + 3, 2, 2);
+        if (growthStage >= 2) {
+          ctx.fillRect(4, startY + 4, 2, 2);
+          ctx.fillRect(10, startY + 5, 2, 2);
+        }
+        if (currentMood === 'happy') {
+          ctx.fillStyle = '#f48fb1';
+          ctx.fillRect(7, startY - 1, 2, 1); // Flower bloom
+        }
       } else {
-        ctx.fillRect(4, 7, 2, 2);
-        ctx.fillRect(8, 8, 2, 2);
+        ctx.fillRect(4, startY + 3, 2, 2);
+        ctx.fillRect(8, startY + 4, 2, 2);
       }
     }
 
