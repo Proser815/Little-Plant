@@ -64,6 +64,35 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Custom iOS-style Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 4px 0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    body.theme-bright ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    body.theme-bright ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
     body {
       font-family: var(--font-family);
       background-color: var(--bg);
@@ -181,6 +210,8 @@
       gap: 8px;
       z-index: 10;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
     }
 
     .hidden { display: none !important; }
