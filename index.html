@@ -17,13 +17,11 @@
       --radius: 12px;
     }
 
-    /* Retro Style Preset Overrides */
     body.style-retro {
       --font-family: 'Press Start 2P', monospace;
       --radius: 0px;
     }
 
-    /* Theme Overrides */
     body.theme-dark {
       --bg: #121212;
       --card-bg: #1e1e1e;
@@ -62,7 +60,6 @@
       transition: background-color 0.2s, color 0.2s;
     }
 
-    /* Compact UI Container */
     .app-card {
       background-color: var(--card-bg);
       border: 2px solid var(--border);
@@ -81,7 +78,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .icon-btn {
@@ -93,15 +90,14 @@
       padding: 2px;
     }
 
-    /* Pixel Art Container */
     .plant-canvas {
       width: 96px;
       height: 96px;
       image-rendering: pixelated;
-      margin: 8px 0;
+      margin: 4px 0;
+      cursor: pointer;
     }
 
-    /* Minimal Dialogue Box */
     .dialogue {
       font-size: 10px;
       text-align: center;
@@ -116,8 +112,30 @@
 
     body.style-retro .dialogue { font-size: 7px; }
 
-    /* Settings Screen Overlay */
-    .settings-panel {
+    /* Mood Selector Bar */
+    .mood-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .mood-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) / 2);
+      padding: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .mood-btn:active { transform: scale(0.9); }
+    .mood-btn.selected { border-color: var(--accent); background: var(--border); }
+
+    /* Settings & Naming Overlay */
+    .overlay-panel {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: var(--card-bg);
@@ -144,39 +162,77 @@
     }
     body.style-retro .setting-label { font-size: 6px; }
 
-    select {
+    input[type="text"], select {
       background: var(--bg);
       color: var(--text);
       border: 1px solid var(--border);
-      padding: 4px;
+      padding: 4px 6px;
       font-family: inherit;
       font-size: 10px;
       border-radius: calc(var(--radius) / 2);
     }
-    body.style-retro select { font-size: 7px; }
+    body.style-retro input[type="text"], body.style-retro select { font-size: 7px; }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 6px;
+      font-family: inherit;
+      font-size: 9px;
+      border-radius: calc(var(--radius) / 2);
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    body.style-retro .btn-primary { font-size: 7px; }
   </style>
 </head>
 <body class="theme-dark style-retro">
 
   <div class="app-card">
+    <!-- Initial Setup Modal (First Visit) -->
+    <div id="naming-screen" class="overlay-panel">
+      <div class="top-bar">
+        <span style="font-size: 8px;" id="welcome-title">WELCOME</span>
+      </div>
+      <div class="setting-item" style="margin-top: 10px;">
+        <label class="setting-label" id="label-name-plant">NAME YOUR PLANT</label>
+        <input type="text" id="initial-name-input" placeholder="Sprout" maxlength="12">
+      </div>
+      <button class="btn-primary" onclick="saveInitialName()" id="btn-start">START</button>
+    </div>
+
     <!-- Main Display Screen -->
     <div id="main-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div class="top-bar">
-        <span style="font-size: 8px;" id="title-text">PLANT</span>
+        <span style="font-size: 8px;" id="plant-display-name">PLANT</span>
         <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
       </div>
 
-      <!-- Pixel Canvas Plant Art -->
-      <canvas id="plantCanvas" class="plant-canvas" width="16" height="16"></canvas>
+      <!-- Pixel Canvas Plant Art (Tap to interaction) -->
+      <canvas id="plantCanvas" class="plant-canvas" width="16" height="16" onclick="petPlant()"></canvas>
 
       <div class="dialogue" id="dialogue-text">...</div>
+
+      <!-- Mood Selection Buttons -->
+      <div class="mood-bar">
+        <button class="mood-btn" onclick="setMood('happy')" title="Happy">😊</button>
+        <button class="mood-btn" onclick="setMood('calm')" title="Calm">😌</button>
+        <button class="mood-btn" onclick="setMood('tired')" title="Tired">😴</button>
+        <button class="mood-btn" onclick="setMood('sad')" title="Sad">🌧️</button>
+      </div>
     </div>
 
     <!-- Settings Overlay Screen -->
-    <div id="settings-screen" class="settings-panel hidden">
+    <div id="settings-screen" class="overlay-panel hidden">
       <div class="top-bar">
         <span style="font-size: 8px;" id="settings-title">SETTINGS</span>
         <button class="icon-btn" onclick="toggleSettings()">✖</button>
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label" id="label-edit-name">PLANT NAME</label>
+        <input type="text" id="edit-name-input" maxlength="12" onchange="updatePlantName(this.value)">
       </div>
 
       <div class="setting-item">
@@ -214,37 +270,153 @@
   </div>
 
   <script>
-    // Localization Data
     const i18n = {
-      en: { title: "PLANT", settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME", msg: "Growing quietly..." },
-      zh: { title: "小植物", settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题", msg: "正在安静地生长..." },
-      ja: { title: "ピクセル植物", settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ", msg: "静かに成長中..." },
-      ko: { title: "픽셀 식물", settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마", msg: "조용히 자라는 중..." },
-      fa: { title: "گیاه پیکسل", settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم", msg: "در حال رشد..." },
-      it: { title: "PIANTA", settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA", msg: "Crescendo in silenzio..." },
-      de: { title: "PFLANZE", settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA", msg: "Wächst leise..." },
-      es: { title: "PLANTA", settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA", msg: "Creciendo en silencio..." },
-      fr: { title: "PLANTE", settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME", msg: "Pousse doucement..." }
+      en: { 
+        welcome: "WELCOME", start: "START", namePlant: "NAME YOUR PLANT", editName: "PLANT NAME",
+        settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME",
+        moods: {
+          happy: "blooming bright with your happiness! ✨",
+          calm: "swaying gently in peaceful thoughts. 🌿",
+          tired: "drooping softly... let's rest together. 🌙",
+          sad: "holding space for you. it's okay to feel rainy. 🌧️"
+        }
+      },
+      zh: { 
+        welcome: "欢迎", start: "开始", namePlant: "给小植物取名", editName: "植物名字",
+        settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题",
+        moods: {
+          happy: "因你的快乐而明亮绽放！✨",
+          calm: "在平淡的思想中微微摇曳。🌿",
+          tired: "轻轻垂下... 一起休息吧。🌙",
+          sad: "静静陪伴着你，下雨也没关系。🌧️"
+        }
+      },
+      ja: { 
+        welcome: "ようこそ", start: "スタート", namePlant: "名前をつけてね", editName: "植物の名前",
+        settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ",
+        moods: {
+          happy: "あなたの嬉しさに合わせて咲いています！✨",
+          calm: "穏やかな心で静かにゆれています。🌿",
+          tired: "すこし垂れています... 一緒に休みましょう。🌙",
+          sad: "静かに寄り添っています。雨の日があってもいいんだよ。🌧️"
+        }
+      },
+      ko: { 
+        welcome: "환영합니다", start: "시작하기", namePlant: "식물 이름 짓기", editName: "식물 이름",
+        settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마",
+        moods: {
+          happy: "당신의 행복으로 밝게 피어납니다! ✨",
+          calm: "평온한 마음 속에서 잔잔히 흔들립니다. 🌿",
+          tired: "살포시 고개를 숙입니다... 같이 쉬어요. 🌙",
+          sad: "조용히 곁을 지킵니다. 비가 와도 괜찮아요. 🌧️"
+        }
+      },
+      fa: { 
+        welcome: "خوش آمدید", start: "شروع", namePlant: "نام‌گذاری گیاه", editName: "نام گیاه",
+        settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم",
+        moods: {
+          happy: "با شادی شما روشن می‌شوم! ✨",
+          calm: "آرام در افکار خنک می‌رقصم. 🌿",
+          tired: "کمی خسته‌ام... بیا با هم استراحت کنیم. 🌙",
+          sad: "کنارت هستم. بارانی بودن اشکالی ندارد. 🌧️"
+        }
+      },
+      it: { 
+        welcome: "BENVENUTO", start: "INIZIA", namePlant: "NOME PIANTA", editName: "NOME PIANTA",
+        settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA",
+        moods: {
+          happy: "fiorisce felicemente con te! ✨",
+          calm: "dondola dolcemente in pace. 🌿",
+          tired: "si riposa dolcemente insieme a te. 🌙",
+          sad: "ti è vicino. va bene anche quando piove. 🌧️"
+        }
+      },
+      de: { 
+        welcome: "WILLKOMMEN", start: "START", namePlant: "PFLANZE BENENNEN", editName: "PFLANZENNAME",
+        settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA",
+        moods: {
+          happy: "blüht hell mit deiner Freude! ✨",
+          calm: "wiegt sanft in stillen Gedanken. 🌿",
+          tired: "lässt den Kopf hängen... ruhen wir aus. 🌙",
+          sad: "ist für dich da. Regen gehört dazu. 🌧️"
+        }
+      },
+      es: { 
+        welcome: "BIENVENIDO", start: "EMPEZAR", namePlant: "NOMBRA TU PLANTA", editName: "NOMBRE PLANTA",
+        settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA",
+        moods: {
+          happy: "¡florece brillante con tu alegría! ✨",
+          calm: "se mece suavemente en calma. 🌿",
+          tired: "se inclina despacio... descansemos juntos. 🌙",
+          sad: "está contigo. Está bien estar triste a veces. 🌧️"
+        }
+      },
+      fr: { 
+        welcome: "BIENVENUE", start: "COMMENCER", namePlant: "NOMME TA PLANTE", editName: "NOM PLANTE",
+        settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME",
+        moods: {
+          happy: "fleurit joyeusement avec toi ! ✨",
+          calm: "balance doucement dans le calme. 🌿",
+          tired: "se repose doucement... à plus tard. 🌙",
+          sad: "est là pour toi. Il peut pleuvoir parfois. 🌧️"
+        }
+      }
     };
 
     let currentLang = 'en';
+    let plantName = 'Sprout';
+    let currentMood = 'happy';
+
+    function saveInitialName() {
+      const input = document.getElementById('initial-name-input').value.trim();
+      if (input) plantName = input;
+      document.getElementById('edit-name-input').value = plantName;
+      document.getElementById('plant-display-name').textContent = plantName.toUpperCase();
+      document.getElementById('naming-screen').classList.add('hidden');
+      updateDialogue();
+    }
+
+    function updatePlantName(newName) {
+      if (newName.trim()) {
+        plantName = newName.trim();
+        document.getElementById('plant-display-name').textContent = plantName.toUpperCase();
+        updateDialogue();
+      }
+    }
 
     function toggleSettings() {
       document.getElementById('settings-screen').classList.toggle('hidden');
     }
 
+    function setMood(mood) {
+      currentMood = mood;
+      document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
+      drawPixelPlant();
+      updateDialogue();
+    }
+
+    function updateDialogue() {
+      const t = i18n[currentLang] || i18n.en;
+      const moodText = t.moods[currentMood];
+      document.getElementById('dialogue-text').textContent = `${plantName} ${moodText}`;
+    }
+
     function updateLanguage(lang) {
       currentLang = lang;
       const t = i18n[lang] || i18n.en;
-      document.getElementById('title-text').textContent = t.title;
+      
+      document.getElementById('welcome-title').textContent = t.welcome;
+      document.getElementById('btn-start').textContent = t.start;
+      document.getElementById('label-name-plant').textContent = t.namePlant;
+      document.getElementById('label-edit-name').textContent = t.editName;
       document.getElementById('settings-title').textContent = t.settings;
       document.getElementById('label-lang').textContent = t.lang;
       document.getElementById('label-ui').textContent = t.ui;
       document.getElementById('label-theme').textContent = t.theme;
-      document.getElementById('dialogue-text').textContent = t.msg;
 
-      // Handle RTL for Persian
       document.body.dir = lang === 'fa' ? 'rtl' : 'ltr';
+      updateDialogue();
     }
 
     function updateStyle(styleClass) {
@@ -257,32 +429,61 @@
       document.body.classList.add(themeClass);
     }
 
-    // Render Procedural Pixel Art Plant
+    function petPlant() {
+      const canvas = document.getElementById('plantCanvas');
+      canvas.style.transform = 'scale(1.15)';
+      setTimeout(() => canvas.style.transform = 'scale(1)', 150);
+    }
+
     function drawPixelPlant() {
       const canvas = document.getElementById('plantCanvas');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 16, 16);
 
-      // Pot (Brown Pixel Art)
+      // Pot
       ctx.fillStyle = '#8b4513';
       ctx.fillRect(5, 11, 6, 4);
       ctx.fillStyle = '#a0522d';
       ctx.fillRect(4, 10, 8, 1);
 
-      // Stem (Green)
-      ctx.fillStyle = '#2e7d32';
-      ctx.fillRect(7, 5, 2, 5);
+      // Stem variations based on mood
+      ctx.fillStyle = currentMood === 'sad' ? '#4a7c59' : '#2e7d32';
+      
+      if (currentMood === 'tired' || currentMood === 'sad') {
+        // Curved / Drooping stem
+        ctx.fillRect(7, 7, 2, 3);
+        ctx.fillRect(6, 5, 2, 2);
+      } else {
+        // Straight Stem
+        ctx.fillRect(7, 5, 2, 5);
+      }
 
-      // Leaves (Lighter Green)
-      ctx.fillStyle = '#4caf50';
-      ctx.fillRect(5, 6, 2, 2);
-      ctx.fillRect(9, 7, 2, 2);
-      ctx.fillRect(7, 3, 2, 2);
+      // Leaf Colors by Mood
+      const leafColors = {
+        happy: '#4caf50',
+        calm: '#66bb6a',
+        tired: '#81c784',
+        sad: '#5c8a67'
+      };
+      ctx.fillStyle = leafColors[currentMood];
 
-      // Highlights
-      ctx.fillStyle = '#81c784';
-      ctx.fillRect(5, 6, 1, 1);
-      ctx.fillRect(7, 3, 1, 1);
+      if (currentMood === 'happy') {
+        // Extra blooming flower/pixels
+        ctx.fillRect(5, 6, 2, 2);
+        ctx.fillRect(9, 7, 2, 2);
+        ctx.fillRect(7, 3, 2, 2);
+        // Flower Top
+        ctx.fillStyle = '#f48fb1';
+        ctx.fillRect(7, 2, 2, 1);
+      } else if (currentMood === 'calm') {
+        ctx.fillRect(5, 6, 2, 2);
+        ctx.fillRect(9, 7, 2, 2);
+        ctx.fillRect(7, 3, 2, 2);
+      } else {
+        // Drooping leaves
+        ctx.fillRect(4, 7, 2, 2);
+        ctx.fillRect(8, 8, 2, 2);
+      }
     }
 
     // Initialize
