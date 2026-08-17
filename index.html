@@ -22,7 +22,7 @@
       --notion-pink: #d15796;
 
       /* Adaptive Notion-themed light mode */
-      --bg: transparent; /* Makes background adapt seamlessly to Notion embed container */
+      --bg: transparent;
       --card-bg: #ffffff;
       --text: #37352f;
       --text-sub: #787774;
@@ -31,29 +31,65 @@
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-pixel: 'Press Start 2P', monospace;
       --font-cjk: 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', 'Vazirmatn', -apple-system, sans-serif;
+      
+      /* Dynamic Sizing Variables (Default: Small) */
+      --radius: 8px;
+      --card-width: 200px;
+      --card-padding: 10px;
+      --canvas-size: 80px;
+      --title-size: 8px;
+      --dialogue-size: 9px;
+      --ui-size: 8px;
+      --btn-padding: 4px;
+      --emoji-size: 11px;
+    }
+
+    body.size-small {
+      --radius: 8px;
+      --card-width: 200px;
+      --card-padding: 10px;
+      --canvas-size: 80px;
+      --title-size: 8px;
+      --dialogue-size: 9px;
+      --ui-size: 8px;
+      --btn-padding: 4px;
+      --emoji-size: 11px;
+    }
+
+    body.size-medium {
+      --radius: 10px;
+      --card-width: 230px;
+      --card-padding: 12px;
+      --canvas-size: 96px;
+      --title-size: 9px;
+      --dialogue-size: 10px;
+      --ui-size: 9px;
+      --btn-padding: 5px;
+      --emoji-size: 13px;
+    }
+
+    body.size-large {
       --radius: 12px;
+      --card-width: 260px;
+      --card-padding: 16px;
+      --canvas-size: 112px;
       --title-size: 10px;
       --dialogue-size: 11px;
       --ui-size: 10px;
+      --btn-padding: 6px;
+      --emoji-size: 14px;
     }
 
-    body.style-retro {
-      --font-family: var(--font-pixel);
-      --radius: 0px;
-      --title-size: 8px;
-      --dialogue-size: 7px;
-      --ui-size: 7px;
-    }
+    body.style-retro.size-small { --title-size: 7px; --dialogue-size: 6px; --ui-size: 6px; }
+    body.style-retro.size-medium { --title-size: 8px; --dialogue-size: 7px; --ui-size: 7px; }
+    body.style-retro.size-large { --title-size: 9px; --dialogue-size: 8px; --ui-size: 8px; }
 
     body.lang-cjk.style-retro,
     body.lang-rtl.style-retro {
       --font-family: var(--font-cjk);
-      --title-size: 11px;
-      --dialogue-size: 11px;
-      --ui-size: 10px;
     }
 
-    /* System Light Mode (Adapts automatically to Notion light theme) */
+    /* System Light Mode */
     @media (prefers-color-scheme: light) {
       body.theme-auto {
         --bg: transparent;
@@ -64,12 +100,12 @@
       }
     }
 
-    /* System Dark Mode (Adapts automatically to Notion dark theme) */
+    /* System Dark Mode */
     @media (prefers-color-scheme: dark) {
       body.theme-auto {
         --bg: transparent;
         --card-bg: #252525;
-        --text: #rgba(255, 255, 255, 0.9);
+        --text: rgba(255, 255, 255, 0.9);
         --text-sub: #9b9b9b;
         --border: #373737;
       }
@@ -101,26 +137,11 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Custom iOS-style Scrollbar Styling */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-      margin: 4px 0;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(120, 119, 116, 0.3);
-      border-radius: 10px;
-      transition: background 0.2s ease;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(120, 119, 116, 0.5);
-    }
+    /* Custom iOS-style Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; margin: 2px 0; }
+    ::-webkit-scrollbar-thumb { background: rgba(120, 119, 116, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(120, 119, 116, 0.5); }
 
     body {
       font-family: var(--font-family);
@@ -130,7 +151,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 10px;
+      padding: 6px;
       transition: background-color 0.2s, color 0.2s;
     }
 
@@ -138,13 +159,14 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      width: 260px;
-      padding: 16px;
+      width: var(--card-width);
+      padding: var(--card-padding);
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: width 0.2s, padding 0.2s;
     }
 
     .top-bar {
@@ -152,7 +174,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .top-title {
@@ -167,17 +189,17 @@
       border: none;
       color: var(--text);
       cursor: pointer;
-      font-size: 14px;
+      font-size: calc(var(--ui-size) + 3px);
       padding: 2px;
     }
 
     .plant-canvas {
-      width: 112px;
-      height: 112px;
+      width: var(--canvas-size);
+      height: var(--canvas-size);
       image-rendering: pixelated;
-      margin: 4px 0;
+      margin: 2px 0;
       cursor: pointer;
-      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), width 0.2s, height 0.2s;
     }
 
     .plant-canvas.morphing {
@@ -189,14 +211,14 @@
       font-size: var(--dialogue-size);
       text-align: center;
       color: var(--text-sub);
-      min-height: 38px;
+      min-height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-top: 2px;
-      line-height: 1.35;
+      line-height: 1.3;
       font-weight: 500;
-      padding: 4px 8px;
+      padding: 3px 6px;
       background: var(--notion-cream);
       border-radius: calc(var(--radius) / 2);
       border: 1px solid rgba(0,0,0,0.04);
@@ -206,16 +228,16 @@
     .status-tracker {
       font-size: calc(var(--ui-size) - 1px);
       color: var(--notion-purple);
-      margin-top: 6px;
+      margin-top: 4px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       font-weight: bold;
     }
 
     .mood-bar {
       display: flex;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 4px;
+      margin-top: 6px;
       justify-content: center;
       width: 100%;
     }
@@ -224,13 +246,16 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: calc(var(--radius) / 2);
-      padding: 6px;
-      font-size: 14px;
+      padding: var(--btn-padding);
+      font-size: var(--emoji-size);
       cursor: pointer;
       transition: transform 0.1s, border-color 0.2s, background-color 0.2s;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Notion Tag Specific Color Accents for Mood Buttons */
     #mbtn-happy { border-color: var(--notion-yellow); }
     #mbtn-calm { border-color: var(--notion-green); }
     #mbtn-tired { border-color: var(--notion-purple); }
@@ -249,10 +274,10 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: var(--card-bg);
       border-radius: var(--radius);
-      padding: 12px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       z-index: 10;
       overflow-y: auto;
       scrollbar-width: thin;
@@ -277,7 +302,7 @@
       background: var(--card-bg);
       color: var(--text);
       border: 1px solid var(--border);
-      padding: 4px 6px;
+      padding: 3px 5px;
       font-family: var(--font-family);
       font-size: var(--ui-size);
       border-radius: calc(var(--radius) / 2);
@@ -287,12 +312,12 @@
       background-color: var(--notion-blue);
       color: #fff;
       border: none;
-      padding: 6px;
+      padding: 4px;
       font-family: var(--font-family);
       font-size: var(--ui-size);
       border-radius: calc(var(--radius) / 2);
       cursor: pointer;
-      margin-top: 4px;
+      margin-top: 2px;
       transition: background-color 0.2s;
     }
 
@@ -303,22 +328,22 @@
     .instructions-box {
       background: var(--notion-cream);
       border: 1px solid var(--border);
-      padding: 8px;
+      padding: 6px;
       border-radius: calc(var(--radius) / 2);
       font-size: calc(var(--ui-size) - 1px);
-      line-height: 1.4;
+      line-height: 1.3;
       color: var(--text-sub);
     }
   </style>
 </head>
-<body class="theme-auto style-retro lang-latin">
+<body class="theme-auto size-small style-retro lang-latin">
 
   <div class="app-card">
     <div id="naming-screen" class="overlay-panel">
       <div class="top-bar">
         <span class="top-title" id="welcome-title">WELCOME</span>
       </div>
-      <div class="setting-item" style="margin-top: 10px;">
+      <div class="setting-item" style="margin-top: 6px;">
         <label class="setting-label" id="label-name-plant">NAME YOUR PLANT</label>
         <input type="text" id="initial-name-input" placeholder="Sprout" maxlength="12">
       </div>
@@ -357,6 +382,15 @@
       <div class="setting-item">
         <label class="setting-label" id="label-edit-name">PLANT NAME</label>
         <input type="text" id="edit-name-input" maxlength="12" onchange="updatePlantName(this.value)">
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label" id="label-size">UI SIZE</label>
+        <select id="select-size" onchange="updateSize(this.value)">
+          <option value="size-small" selected>Small</option>
+          <option value="size-medium">Medium</option>
+          <option value="size-large">Large</option>
+        </select>
       </div>
 
       <div class="setting-item">
@@ -400,7 +434,7 @@
   <script>
     const i18n = {
       en: { 
-        welcome: "WELCOME", start: "START", namePlant: "NAME YOUR PLANT", editName: "PLANT NAME",
+        welcome: "WELCOME", start: "START", namePlant: "NAME YOUR PLANT", editName: "PLANT NAME", size: "UI SIZE",
         settings: "SETTINGS", lang: "LANGUAGE", ui: "UI STYLE", theme: "THEME",
         stage: "STAGE", chances: "CHANCES", howTo: "HOW IT WORKS",
         instructions: "Log your mood up to 4 times a day. Your plant reflects your mood with smooth state transitions. At the end of the day, your average score is tallied—positive vibes will help your plant bloom!",
@@ -414,7 +448,7 @@
         }
       },
       zh: { 
-        welcome: "欢迎", start: "开始", namePlant: "给小植物取名", editName: "植物名字",
+        welcome: "欢迎", start: "开始", namePlant: "给小植物取名", editName: "植物名字", size: "界面尺寸",
         settings: "设置", lang: "语言", ui: "UI 风格", theme: "主题",
         stage: "阶段", chances: "剩余次数", howTo: "使用说明",
         instructions: "每天可记录最多 4 次心情。植物会根据你的心情平滑变幻形态。一天结束时计算平均值—保持积极情绪可让植物开出鲜花！",
@@ -428,7 +462,7 @@
         }
       },
       ja: { 
-        welcome: "ようこそ", start: "スタート", namePlant: "名前をつけてね", editName: "植物の名前",
+        welcome: "ようこそ", start: "スタート", namePlant: "名前をつけてね", editName: "植物の名前", size: "UIサイズ",
         settings: "設定", lang: "言語", ui: "UIスタイル", theme: "テーマ",
         stage: "ステージ", chances: "残り回数", howTo: "遊び方",
         instructions: "1日最大4回まで気分を記録できます。植物は現在の気分に応じてスムーズに変化します。1日の終わりに平均気分が計算され、ポジティブな気分で綺麗な花が咲きます！",
@@ -442,7 +476,7 @@
         }
       },
       ko: { 
-        welcome: "환영합니다", start: "시작하기", namePlant: "식물 이름 짓기", editName: "식물 이름",
+        welcome: "환영합니다", start: "시작하기", namePlant: "식물 이름 짓기", editName: "식물 이름", size: "UI 크기",
         settings: "설정", lang: "언어", ui: "UI 스타일", theme: "테마",
         stage: "단계", chances: "기회", howTo: "사용 방법",
         instructions: "하루에 최대 4번 기분을 기록할 수 있습니다. 식물은 현재 기분에 따라 유연하게 변합니다. 하루 평균 점수가 집계되며 긍정적인 마음이 예쁜 꽃을 피워냅니다!",
@@ -456,7 +490,7 @@
         }
       },
       fa: { 
-        welcome: "خوش آمدید", start: "شروع", namePlant: "نام‌گذاری گیاه", editName: "نام گیاه",
+        welcome: "خوش آمدید", start: "شروع", namePlant: "نام‌گذاری گیاه", editName: "نام گیاه", size: "اندازه رابط",
         settings: "تنظیمات", lang: "زبان", ui: "سبک رابط", theme: "تم",
         stage: "مرحله", chances: "فرصت‌ها", howTo: "راهنما",
         instructions: "روزانه تا ۴ بار حال خود را ثبت کنید. گیاه شما با انیمیشن نرم تغییر شکل می‌دهد. احساسات مثبت باعث رشد و شکفتن گل‌های زیبا می‌شود!",
@@ -470,7 +504,7 @@
         }
       },
       it: { 
-        welcome: "BENVENUTO", start: "INIZIA", namePlant: "NOME PIANTA", editName: "NOME PIANTA",
+        welcome: "BENVENUTO", start: "INIZIA", namePlant: "NOME PIANTA", editName: "NOME PIANTA", size: "DIMENSIONE UI",
         settings: "IMPOSTAZIONI", lang: "LINGUA", ui: "STILE UI", theme: "TEMA",
         stage: "STADIO", chances: "TENTATIVI", howTo: "COME FUNZIONA",
         instructions: "Registra il tuo umore fino a 4 volte al giorno. La tua pianta cambierà in modo fluido. A fine giornata verrà calcolata la media: i pensieri positivi faranno sbocciare un bel fiore!",
@@ -484,7 +518,7 @@
         }
       },
       de: { 
-        welcome: "WILLKOMMEN", start: "START", namePlant: "PFLANZE BENENNEN", editName: "PFLANZENNAME",
+        welcome: "WILLKOMMEN", start: "START", namePlant: "PFLANZE BENENNEN", editName: "PFLANZENNAME", size: "UI GRÖSSE",
         settings: "EINSTELLUNGEN", lang: "SPRACHE", ui: "UI STIL", theme: "THEMA",
         stage: "STUFE", chances: "CHANCEN", howTo: "ANLEITUNG",
         instructions: "Trage deine Stimmung bis zu 4 Mal am Tag ein. Deine Pflanze verwandelt sich fließend. Positive Energie lässt wunderschöne Blüten erblühen!",
@@ -498,7 +532,7 @@
         }
       },
       es: { 
-        welcome: "BIENVENIDO", start: "EMPEZAR", namePlant: "NOMBRA TU PLANTA", editName: "NOMBRE PLANTA",
+        welcome: "BIENVENIDO", start: "EMPEZAR", namePlant: "NOMBRA TU PLANTA", editName: "NOMBRE PLANTA", size: "TAMAÑO UI",
         settings: "AJUSTES", lang: "IDIOMA", ui: "ESTILO UI", theme: "TEMA",
         stage: "ETAPA", chances: "INTENTOS", howTo: "CÓMO FUNCIONA",
         instructions: "Registra tu estado de ánimo hasta 4 veces al día. Tu planta cambia con animaciones suaves. ¡Las buenas vibras harán florecer hermosas pétalos!",
@@ -512,7 +546,7 @@
         }
       },
       fr: { 
-        welcome: "BIENVENUE", start: "COMMENCER", namePlant: "NOMME TA PLANTE", editName: "NOM PLANTE",
+        welcome: "BIENVENUE", start: "COMMENCER", namePlant: "NOMME TA PLANTE", editName: "NOM PLANTE", size: "TAILLE UI",
         settings: "RÉGLAGES", lang: "LANGUE", ui: "STYLE UI", theme: "THÈME",
         stage: "ÉTAPE", chances: "ESSAIS", howTo: "COMMENT ÇA MARCHE",
         instructions: "Enregistre ton humeur jusqu'à 4 fois par jour. Ta plante se métamorphose en douceur. Les bonnes ondes feront éclore une magnifique fleur !",
@@ -630,6 +664,7 @@
       document.getElementById('btn-start').textContent = t.start;
       document.getElementById('label-name-plant').textContent = t.namePlant;
       document.getElementById('label-edit-name').textContent = t.editName;
+      if (document.getElementById('label-size')) document.getElementById('label-size').textContent = t.size || "UI SIZE";
       document.getElementById('settings-title').textContent = t.settings;
       document.getElementById('label-lang').textContent = t.lang;
       document.getElementById('label-ui').textContent = t.ui;
@@ -641,6 +676,11 @@
       
       if (chancesLeft > 0) updateDialogue();
       updateTrackerUI();
+    }
+
+    function updateSize(sizeClass) {
+      document.body.classList.remove('size-small', 'size-medium', 'size-large');
+      document.body.classList.add(sizeClass);
     }
 
     function updateStyle(styleClass) {
@@ -664,7 +704,7 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 16, 16);
 
-      // Pot Base & Rim using Notion Terracotta / Orange palette accent
+      // Pot Base & Rim
       ctx.fillStyle = '#d9730d';
       ctx.fillRect(5, 12, 6, 3);
       ctx.fillStyle = '#b35c05';
@@ -682,7 +722,7 @@
         ctx.fillRect(7, startY, 2, stemHeight);
       }
 
-      // Leaves with Notion Green Palette
+      // Leaves
       const leafColors = { happy: '#448361', calm: '#5ca278', tired: '#7cbfa1', sad: '#5c8a67' };
       ctx.fillStyle = leafColors[currentMood];
 
@@ -698,31 +738,27 @@
         ctx.fillRect(8, startY + 4, 2, 2);
       }
 
-      // Flower Blossom with Notion Pink & Yellow Highlights
+      // Flower Blossom
       if (currentMood === 'happy') {
         const flowerY = startY - 3;
 
-        // Outer Petals
-        ctx.fillStyle = '#d15796'; // Notion Pink tag color
+        ctx.fillStyle = '#d15796';
         ctx.fillRect(6, flowerY, 4, 4);
 
-        // Cross-pattern highlights for petals
         ctx.fillStyle = '#e86dae';
-        ctx.fillRect(7, flowerY - 1, 2, 1); // Top
-        ctx.fillRect(7, flowerY + 4, 2, 1); // Bottom
-        ctx.fillRect(5, flowerY + 1, 1, 2); // Left
-        ctx.fillRect(10, flowerY + 1, 1, 2); // Right
+        ctx.fillRect(7, flowerY - 1, 2, 1);
+        ctx.fillRect(7, flowerY + 4, 2, 1);
+        ctx.fillRect(5, flowerY + 1, 1, 2);
+        ctx.fillRect(10, flowerY + 1, 1, 2);
 
-        // Bright Yellow Core (Notion Yellow accent)
         ctx.fillStyle = '#d9931e';
         ctx.fillRect(7, flowerY + 1, 2, 2);
 
       } else if (currentMood === 'calm') {
-        // Closed Flower Bud (Notion Purple Tip)
         const budY = startY - 2;
-        ctx.fillStyle = '#448361'; // Green sepal base
+        ctx.fillStyle = '#448361';
         ctx.fillRect(7, budY + 1, 2, 2);
-        ctx.fillStyle = '#9065b0'; // Notion Purple bud tip
+        ctx.fillStyle = '#9065b0';
         ctx.fillRect(7, budY, 2, 1);
       }
     }
